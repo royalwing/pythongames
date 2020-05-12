@@ -64,7 +64,7 @@ class Player:
             x = w
 
         for y in range(int(self.position-self.barwidth/2), int(self.position+self.barwidth/2)):
-            game.SetPixel(x, y, "#")
+            game.SetPixelXY(x, y, "#")
 
         game.DrawText(x, 0, str(self.score))
     
@@ -214,7 +214,7 @@ class PingPongGame(rwcommon.Game):
             self.ball.accely *= -1
 
 
-        self.SetPixel(self.ball.x, self.ball.y, 'O')
+        self.SetPixelXY(self.ball.x, self.ball.y, 'O')
 
         self.player1.render(self)
         self.player2.render(self)

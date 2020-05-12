@@ -5,6 +5,7 @@ import os
 import platform
 import time
 import keyboard
+import random
 
 def cleanScreen():
     system_name = platform.system()
@@ -16,6 +17,10 @@ def cleanScreen():
 def getScreenSize():
     x , y = os.get_terminal_size()
     return (x, y-2)
+
+def getRandomPoint():
+    w, h = getScreenSize()
+    return Vector2D(random.randrange(0, w), random.randrange(0,h))
 
 def getCurrentMillis():
     return time.time()*1000
@@ -102,7 +107,11 @@ class Game:
             ID+=1
         pass
 
-    def SetPixel(self, x, y, status):
+    def SetPixel(self, vector, status):
+        ID = pixelPosToID(vector.x, vector.y)
+        self.screenMem[ID] = status
+
+    def SetPixelXY(self, x, y, status):
         ID = pixelPosToID(x, y)
         self.screenMem[ID] = status
         pass
@@ -112,3 +121,57 @@ class Game:
 
     def Render(self, deltaTime):
         pass
+
+class Vector2D:
+    x = 0
+    y = 0
+
+    def __init__(self, x = 0, y = 0):
+        self.x = x
+        self.y = y
+
+    def __add__(self, o):
+        return Vector2D(self.x+o.x, self.y+o.y)
+
+    def __sub__(self, o):
+        return Vector2D(self.x-o.x, self.y-o.y)
+
+    def __mul__(self, o):
+        if type(o) is Vector2D:
+            return Vector2D(self.x*o.x, self.y*o.y)
+        elif type(o) is float:
+            return Vector2D(self.x*o, self.y*o)
+        return self
+
+    def __eq__(self, o):
+        return self.x == o.x and self.y == o.y
+
+class StateMachine:
+
+    CurrentState = None
+
+    def Tick(self, dt):
+        if self.CurrentState != None:
+            self.CurrentState.OnStateTick(dt)
+
+    def Render(self, dt):
+        if self.CurrentState != None:
+            self.CurrentState.OnStateRender(dt)
+
+    def GoToState(self, state):
+        if self.CurrentState != None:
+            self.CurrentState.OnStateLeft()
+        self.CurrentState = state
+        self.CurrentState.OnStateEntered()
+    class State:
+        game = None
+        def __init__(self, game):
+            self.game = game
+        def OnStateEntered(self):
+            pass
+        def OnStateLeft(self):
+            pass
+        def OnStateTick(self, deltaTime):
+            pass
+        def OnStateRender(self, deltaTime):
+            pass
