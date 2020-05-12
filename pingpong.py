@@ -30,6 +30,10 @@ class Ball:
         if self.accely == 0:
             self.accely = -1
 
+        speed = random.randint(1, 2)
+        self.accelx *= speed
+        self.accely *= speed
+
     def Tick(self, deltaTime):
         self.x += self.accelx
         self.y += self.accely
@@ -62,10 +66,15 @@ class Player:
         for y in range(int(self.position-self.barwidth/2), int(self.position+self.barwidth/2)):
             game.SetPixel(x, y, "#")
 
-        game.SetPixel(x, 0, str(self.score))
+        game.DrawText(x, 0, str(self.score))
     
     def Tick(self, deltaTime):
+        w, h = rwcommon.getScreenSize()
         self.position += int(self.accel*2)
+        if self.position-(self.barwidth/2) < 0:
+            self.position = self.barwidth/2
+        if self.position+(self.barwidth/2) > h:
+            self.position = h - (self.barwidth/2)
         pass
     
 
@@ -97,7 +106,7 @@ class Player:
         w, h = rwcommon.getScreenSize()
         x = 0
         if self.side == 1:
-            x = w
+            x = w-1
 
         if x == inx and abs(iny - self.position) < self.barwidth:
             return True
@@ -159,7 +168,7 @@ class PingPongGame(rwcommon.Game):
                         return
                     self.ball.reset()
                     self.GoToState(STATE_WAITING)
-            if self.ball.x == w:
+            if self.ball.x == w-1:
                 if self.player2.isHere(self.ball.x, self.ball.y):
                     self.ball.accelx *= -1
                     self.ball.accely += self.player2.accel
@@ -180,36 +189,10 @@ class PingPongGame(rwcommon.Game):
 
             titley = int(h/2)-4
             titlex = int(w/2)-4
+            self.DrawText(titlex, titley, "PING-PONG")
             presstexty = h - 4
-            presstextx = int(w/2)-8
-            self.SetPixel(titlex+1, titley, 'P')
-            self.SetPixel(titlex+2, titley, 'I')
-            self.SetPixel(titlex+3, titley, 'N')
-            self.SetPixel(titlex+4, titley, 'G')
-            self.SetPixel(titlex+5, titley, '-')
-            self.SetPixel(titlex+6, titley, 'P')
-            self.SetPixel(titlex+7, titley, 'O')
-            self.SetPixel(titlex+8, titley, 'N')
-            self.SetPixel(titlex+9, titley, 'G')
-
-            
-            self.SetPixel(presstextx+0, presstexty, 'S')
-            self.SetPixel(presstextx+1, presstexty, 'P')
-            self.SetPixel(presstextx+2, presstexty, 'A')
-            self.SetPixel(presstextx+3, presstexty, 'C')
-            self.SetPixel(presstextx+4, presstexty, 'E')
-            self.SetPixel(presstextx+5, presstexty, 'B')
-            self.SetPixel(presstextx+6, presstexty, 'A')
-            self.SetPixel(presstextx+7, presstexty, 'R')
-            self.SetPixel(presstextx+8, presstexty, ' ')
-            self.SetPixel(presstextx+9, presstexty, 't')
-            self.SetPixel(presstextx+10, presstexty, 'o')
-            self.SetPixel(presstextx+11, presstexty, ' ')
-            self.SetPixel(presstextx+12, presstexty, 'S')
-            self.SetPixel(presstextx+13, presstexty, 't')
-            self.SetPixel(presstextx+14, presstexty, 'a')
-            self.SetPixel(presstextx+15, presstexty, 'r')
-            self.SetPixel(presstextx+16, presstexty, 't')
+            presstextx = int(w/2)-13
+            self.DrawText(presstextx, presstexty, "Press SPACEBAR to continue")
 
             return
 
@@ -237,25 +220,9 @@ class PingPongGame(rwcommon.Game):
         self.player2.render(self)
 
         if self.gameState == STATE_WAITING:
-            presstexty = h - 4
-            presstextx = int(w/2)-8
-            self.SetPixel(presstextx+0, presstexty, 'S')
-            self.SetPixel(presstextx+1, presstexty, 'P')
-            self.SetPixel(presstextx+2, presstexty, 'A')
-            self.SetPixel(presstextx+3, presstexty, 'C')
-            self.SetPixel(presstextx+4, presstexty, 'E')
-            self.SetPixel(presstextx+5, presstexty, 'B')
-            self.SetPixel(presstextx+6, presstexty, 'A')
-            self.SetPixel(presstextx+7, presstexty, 'R')
-            self.SetPixel(presstextx+8, presstexty, ' ')
-            self.SetPixel(presstextx+9, presstexty, 't')
-            self.SetPixel(presstextx+10, presstexty, 'o')
-            self.SetPixel(presstextx+11, presstexty, ' ')
-            self.SetPixel(presstextx+12, presstexty, 'S')
-            self.SetPixel(presstextx+13, presstexty, 't')
-            self.SetPixel(presstextx+14, presstexty, 'a')
-            self.SetPixel(presstextx+15, presstexty, 'r')
-            self.SetPixel(presstextx+16, presstexty, 't')
+            presstexty = h / 2
+            presstextx = int(w/2)-12
+            self.DrawText(presstextx, presstexty, "Press SPACEBAR to start")
 
         pass
 

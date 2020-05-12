@@ -14,7 +14,8 @@ def cleanScreen():
         os.system("cls")
 
 def getScreenSize():
-    return (48, 24)
+    x , y = os.get_terminal_size()
+    return (x, y-2)
 
 def getCurrentMillis():
     return time.time()*1000
@@ -92,6 +93,13 @@ class Game:
                 finalStr += scrmem[id:id+w] + "\n"
             print(finalStr)
             time.sleep(0.016) #trying to reach 60fps
+        pass
+
+    def DrawText(self, x, y, text):
+        ID = pixelPosToID(x, y)
+        for char in text:
+            self.screenMem[ID] = char
+            ID+=1
         pass
 
     def SetPixel(self, x, y, status):
